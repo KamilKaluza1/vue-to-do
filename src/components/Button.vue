@@ -14,7 +14,7 @@ export default {
 
   methods: {
     onClick() {
-      console.log("działa");
+      this.$emit('toggle-form');
     },
   },
 };
