@@ -4,13 +4,19 @@
       "id": 0,
       "text": "task one",
       "day": "first july",
-      "reminder": false
+      "reminder": true
     },
     {
       "id": 1,
       "text": "task two",
       "day": "second july",
       "reminder": true
+    },
+    {
+      "text": "test",
+      "day": "test day",
+      "reminder": true,
+      "id": 2
     }
   ]
 }

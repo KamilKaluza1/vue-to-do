@@ -1,7 +1,11 @@
 <template>
   <div class="container">
-    <Header @toggle-form="toggleForm" title="Task tracker" :showAddTask="showAddTask" />
-    <div v-show="showAddTask" >
+    <Header
+      @toggle-form="toggleForm"
+      title="Task tracker"
+      :showAddTask="showAddTask"
+    />
+    <div v-show="showAddTask">
       <AddTask @add-task="addTask" />
     </div>
     <Tasks
@@ -31,38 +35,56 @@ export default {
     };
   },
   methods: {
-    deleteTask(id) {
+    async fetchTasks() {
+      const res = await fetch("api/tasks");
+      const data = await res.json();
+      return data;
+    },
+    async fetchTask(id) {
+      const res = await fetch(`api/tasks/${id}`);
+      const data = await res.json();
+      console.log(data)
+      return data;
+    },
+    async deleteTask(id) {
+      const res = await fetch(`api/tasks/${id}`, {
+        method: "DELETE",
+      });
       if (confirm("Are you sure")) {
         this.tasks = this.tasks.filter((task) => task.id !== id);
       }
     },
-    toggleReminder(id) {
-      this.tasks.map((task) => {
-        task.id === id ? (task.reminder = !task.reminder) : (task.id = task.id);
+    async toggleReminder(id) {
+      const taskToToggle = await this.fetchTask(id);
+      const updTask = { ...taskToToggle, reminder: !taskToToggle.reminder };
+
+      const res = await fetch(`api/tasks/${id}`, {
+        method: "PUT",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(updTask),
       });
+      const data = await res.json();
+      this.tasks = this.tasks.map((task) =>
+        task.id === id ? { ...task, reminder: data.reminder } : task
+      )
     },
-    addTask(newTask) {
-      this.tasks = [...this.tasks, newTask];
+    async addTask(newTask) {
+      const res = await fetch("api/tasks", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(newTask),
+      });
+      const data = await res.json();
+      this.tasks = [...this.tasks, data];
     },
     toggleForm() {
       this.showAddTask = !this.showAddTask;
     },
   },
-  created() {
-    this.tasks = [
-      {
-        id: 0,
-        text: "task one",
-        day: "first july",
-        reminder: false,
-      },
-      {
-        id: 1,
-        text: "task two",
-        day: "second july",
-        reminder: true,
-      },
-    ];
+  async created() {
+    this.tasks = await this.fetchTasks();
   },
 };
 </script>

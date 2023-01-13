@@ -15,7 +15,7 @@
     </div>
     <div class="form-control form-control-check">
       <label>Set Reminder</label>
-      <input v-model="rem" type="checkbox" name="reminder" />
+      <input v-model="reminder" type="checkbox" name="reminder" />
     </div>
 
     <input type="submit" value="Save Task" class="btn btn-block" />
@@ -23,7 +23,6 @@
 </template>
 
 <script>
-
 export default {
   name: "AddTAsk",
   data() {
@@ -33,27 +32,26 @@ export default {
       reminder: false,
     };
   },
-  methods:{
-    onSubmit(e){
-        e.preventDefault();
-        if(!this.text){
-            alert("Please add text");
-            return
-        }
+  methods: {
+    onSubmit(e) {
+      e.preventDefault();
+      if (!this.text) {
+        alert("Please add text");
+        return;
+      }
 
-        const newTask = {
-            id: Math.floor(Math.random() * 100000000),
-            text: this.text,
-            day: this.day,
-            reminder: this.reminder
-        }
+      const newTask = {
+        text: this.text,
+        day: this.day,
+        reminder: this.reminder,
+      };
 
-        this.text = '';
-        this.day = '';
-        this.reminder = false;
+      this.text = "";
+      this.day = "";
+      this.reminder = false;
 
-        this.$emit('add-task', newTask)
-    }
-  }
+      this.$emit("add-task", newTask);
+    },
+  },
 };
 </script>
